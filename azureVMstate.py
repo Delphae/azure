@@ -39,7 +39,7 @@ headers = {'Authorization': 'Bearer ' + access_token,
 
 
 # get VM's in all resource groups - reportlist
-url = 'https://management.azure.com/subscriptions/'+subscriptionId+'/resourceGroups?api-version=2014-04-01'
+url = 'https://management.azure.com/subscriptions/' + subscriptionId + '/resourceGroups?api-version=2014-04-01'
 response = requests.get(url, headers=headers, timeout=5)
 jsdata = response.json()
 
@@ -47,7 +47,7 @@ reportList = list()
 for resourceGroup in jsdata['value']:
     resourceGroupName = resourceGroup['name']
 
-    url = 'https://management.azure.com/subscriptions/'+subscriptionId+'/resourceGroups/'+resourceGroupName+'/providers/Microsoft.Compute/virtualMachines?api-version=2018-10-01'
+    url = 'https://management.azure.com/subscriptions/' + subscriptionId + '/resourceGroups/' + resourceGroupName + '/providers/Microsoft.Compute/virtualMachines?api-version=2018-10-01'
     response = requests.get(url, headers=headers)
     jsdata = response.json()
 
@@ -57,7 +57,7 @@ for resourceGroup in jsdata['value']:
             vmState = {'resourceGroup': resourceGroupName,
                        'vmName' : vmName}
 
-            url = 'https://management.azure.com/subscriptions/'+subscriptionId+'/resourceGroups/'+resourceGroupName+'/providers/Microsoft.Compute/virtualMachines/'+vmName+'/instanceView?api-version=2017-03-30'
+            url = 'https://management.azure.com/subscriptions/' + subscriptionId + '/resourceGroups/' + resourceGroupName + '/providers/Microsoft.Compute/virtualMachines/' + vmName + '/instanceView?api-version=2017-03-30'
             response = requests.get(url, headers=headers)
             vmdata = response.json()
             for status in vmdata['statuses']:
