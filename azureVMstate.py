@@ -14,12 +14,24 @@
 
 import requests
 #import json
-
+####################################################
+# authentication ID's
+# subscription ID can be found on a resource, overview page
 subscriptionId = 'a8682560-0e6b-4834-accf-21ff95b29125'
+resourceGroup = 'delphae-freetrail'
+
+# app information can be found:
+# Azure Active Directory
+# app Registrations
+# overview
 tenantId = '3089f1b6-d716-42a9-9dd5-a580cf7b4f12'
 clientId = '0407876f-fcd1-4260-bfa4-4180a54beced' # application ID
-clientSecret = '2gHRDZHY5SM@T-HasCFBnM:-lx6zkZD4'
 
+# client secret only visible during creation
+# copy & pase here
+clientSecret = '2gHRDZHY5SM@T-HasCFBnM:-lx6zkZD4'
+####################################################
+# access token
 url = "https://login.windows.net/%s/oauth2/token" % tenantId
 resource = 'https://management.azure.com' # Azure Resource Manager
 parameters = {
@@ -33,9 +45,11 @@ headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 response = requests.post(url, data=parameters, headers=headers)
 jsdata = response.json()
 access_token = jsdata['access_token']
-
+####################################################
+# authentication header
 headers = {'Authorization': 'Bearer ' + access_token,
            'Content-Type': 'application/json'}
+####################################################
 
 
 # get VM's in all resource groups - reportlist
