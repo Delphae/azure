@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding: utf-8
 #    ____       _       _
 #   |  _ \  ___| |_ __ | |__   __ _  ___
@@ -34,7 +34,7 @@ response = requests.post(url, data=parameters, headers=headers)
 jsdata = response.json()
 access_token = jsdata['access_token']
 
-headers = {'Authorization': 'Bearer ' + access_token, 
+headers = {'Authorization': 'Bearer ' + access_token,
            'Content-Type': 'application/json'}
 
 
@@ -46,7 +46,7 @@ jsdata = response.json()
 reportList = list()
 for resourceGroup in jsdata['value']:
     resourceGroupName = resourceGroup['name']
-    
+
     url = 'https://management.azure.com/subscriptions/'+subscriptionId+'/resourceGroups/'+resourceGroupName+'/providers/Microsoft.Compute/virtualMachines?api-version=2018-10-01'
     response = requests.get(url, headers=headers)
     jsdata = response.json()
@@ -54,10 +54,10 @@ for resourceGroup in jsdata['value']:
     if len(jsdata['value']): # resource group has VM's
         for vm in jsdata['value']:
             vmName = vm['name']
-            vmState = {'resourceGroup': resourceGroupName, 
-                       'vmName' : vmName} 
+            vmState = {'resourceGroup': resourceGroupName,
+                       'vmName' : vmName}
 
-            url = 'https://management.azure.com/subscriptions/a8682560-0e6b-4834-accf-21ff95b29125/resourceGroups/'+resourceGroupName+'/providers/Microsoft.Compute/virtualMachines/'+vmName+'/instanceView?api-version=2017-03-30'
+            url = 'https://management.azure.com/subscriptions/'+subscriptionId+'/resourceGroups/'+resourceGroupName+'/providers/Microsoft.Compute/virtualMachines/'+vmName+'/instanceView?api-version=2017-03-30'
             response = requests.get(url, headers=headers)
             vmdata = response.json()
             for status in vmdata['statuses']:
@@ -66,15 +66,11 @@ for resourceGroup in jsdata['value']:
             reportList.append(vmState)
 
 
-# show reportlist        
+# show reportlist
 frmtstr = '{:20}{:25}{:12}{}'
 print (frmtstr.format('resource group','vm name','provision','power'))
 for vmState in sorted(reportList, key=lambda x: x['PowerState']!='running'):
-    print (frmtstr.format(vmState['resourceGroup'], 
-                               vmState['vmName'], 
+    print (frmtstr.format(vmState['resourceGroup'],
+                               vmState['vmName'],
                                vmState['ProvisioningState'],
                                vmState['PowerState']))
-
-
-
-
