@@ -6,10 +6,8 @@
 #   | |_| |  __/ | |_) | | | | (_| |  __/
 #   |____/ \___|_| .__/|_| |_|\__,_|\___|
 #                |_|
-
-
-# version 1.8
-# date 2019-08-16
+# version 1.9b
+# date 2019-08-17
 # author: Carlo van Wordragen
 
 import requests
@@ -56,20 +54,26 @@ headers = {'Authorization': 'Bearer ' + access_token,
 url = 'https://management.azure.com/subscriptions/' + subscriptionId + '/resourceGroups?api-version=2014-04-01'
 response = requests.get(url, headers=headers, timeout=5)
 jsdata = response.json()
+resourceGroups = jsdata['value']
 
 reportList = list()
-for resourceGroup in jsdata['value']:
+for resourceGroup in resourceGroups:
     resourceGroupName = resourceGroup['name']
 
     url = 'https://management.azure.com/subscriptions/' + subscriptionId + '/resourceGroups/' + resourceGroupName + '/providers/Microsoft.Compute/virtualMachines?api-version=2018-10-01'
     response = requests.get(url, headers=headers)
-    jsdata = response.json()
+    resourceGroupData = response.json()
 
-    if len(jsdata['value']): # resource group has VM's
-        for vm in jsdata['value']:
+    virtMachines = resourceGroupData['value']
+    if len(virtMachines): # resource group has VM's
+        for vm in virtMachines:
             vmName = vm['name']
             vmState = {'resourceGroup': resourceGroupName,
-                       'vmName' : vmName}
+                       'vmName' : vmName,
+                       'osType' : vm['properties']['storageProfile']['osDisk']['osType'],
+                       'sku' : vm['properties']['storageProfile']['imageReference']['sku'],
+                       'vmSize' : vm['properties']['hardwareProfile']['vmSize']
+                       }   
 
             url = 'https://management.azure.com/subscriptions/' + subscriptionId + '/resourceGroups/' + resourceGroupName + '/providers/Microsoft.Compute/virtualMachines/' + vmName + '/instanceView?api-version=2017-03-30'
             response = requests.get(url, headers=headers)
@@ -81,10 +85,13 @@ for resourceGroup in jsdata['value']:
 
 
 # show reportlist
-frmtstr = '{:20}{:25}{:12}{}'
-print (frmtstr.format('resource group','vm name','provision','power'))
+frmtstr = '{:20}{:25}{:13}{:13}{:8}{:12}{}'
+print (frmtstr.format('resource group','vm name','provision','power','os','sku','vmsize'))
 for vmState in sorted(reportList, key=lambda x: x['PowerState']!='running'):
     print (frmtstr.format(vmState['resourceGroup'],
                                vmState['vmName'],
                                vmState['ProvisioningState'],
-                               vmState['PowerState']))
+                               vmState['PowerState'],
+                               vmState['osType'],
+                               vmState['sku'],
+                               vmState['vmSize']))
