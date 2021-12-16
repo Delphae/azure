@@ -1,3 +1,5 @@
+# CWO 2021-12-16
+
 resourcegroup="resource-group-01"
 peer1="peer-vmx1"
 peer2="peer-vmx2-spoke"
