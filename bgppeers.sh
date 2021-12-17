@@ -1,5 +1,5 @@
-# CWO 2021-12-12
-resourcegroup="azure-resourcegrp-01"
-routeserver="sdwan-routerserver"
-
-az network routeserver peering list --routeserver $routeserver --resource-group $resourcegroup --output table
+# CWO 2021-12-17
+routeserver="sdwan-routeserver"
+cmd="az network routeserver peering list --routeserver $routeserver -g resource-group-01 -o table"
+echo $cmd
+eval $cmd

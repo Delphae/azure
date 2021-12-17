@@ -1,6 +1,6 @@
-# CWO 2021-12-14
-resourcegroup="azure-resourcegrp-01"
-routeserver="sdwan-routerserver"
+# CWO 2021-12-17
+routeserver="sdwan-routeserver"
 
-#az network routeserver show --name $routeserver  --resource-group $resourcegroup
-az network routeserver list
+cmd="az network routeserver show -g resource-group-01 -n $routeserver"
+echo $cmd
+eval $cmd
